@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receptionist Dashboard - CliniVerse</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i data-feather="activity"></i>
+                <span>CliniVerse</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="receptionist-dashboard.html" class="nav-item active">
+                    <i data-feather="grid"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="patients.html" class="nav-item">
+                    <i data-feather="users"></i>
+                    <span>Patients</span>
+                </a>
+                <a href="appointments.html" class="nav-item">
+                    <i data-feather="calendar"></i>
+                    <span>Appointments</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <i data-feather="log-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-wrapper">
+
+            <header class="top-navbar">
+                <button class="hamburger" id="sidebar-toggle" style="display: none;">
+                    <i data-feather="menu"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <span style="font-weight: 500; color: var(--text-muted);" id="user-display-name">Receptionist</span>
+                    <div class="avatar">R</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Reception Coordinator</h1>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-nav">
+                    <div class="tab-link active" data-tab="requests">Patient Requests</div>
+                    <div class="tab-link" data-tab="upcoming">Upcoming Schedule</div>
+                    <div class="tab-link" data-tab="analytics">Analytics</div>
+                </div>
+
+                <!-- Tab: Patient Requests -->
+                <div id="requests" class="tab-content active">
+                    <div class="table-container">
+                        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                            <h2 style="font-size: 1.125rem; font-weight: 600;">Incoming Illness Requests</h2>
+                            <p style="font-size: 0.875rem; color: var(--text-muted);">Review patient symptoms and match
+                                them with a doctor.</p>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Symptoms</th>
+                                    <th>Urgency</th>
+                                    <th>Preferred</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patient-requests-body">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Loading requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Upcoming Schedule -->
+                <div id="upcoming" class="tab-content">
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i data-feather="users"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Patients</h3>
+                                <p id="stat-total-patients">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i data-feather="calendar"></i></div>
+                            <div class="stat-info">
+                                <h3>Today's Bookings</h3>
+                                <p id="stat-today-bookings">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i data-feather="clock"></i></div>
+                            <div class="stat-info">
+                                <h3>Upcoming</h3>
+                                <p id="stat-upcoming-appts">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container mt-4">
+                        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                            <h2 style="font-size: 1.125rem; font-weight: 600;">Upcoming Master Schedule</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="upcoming-appointments-body">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Analytics -->
+                <div id="analytics" class="tab-content">
+                    <div class="analytics-grid">
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Daily Bookings</h3>
+                            <canvas id="bookingsChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Appointments by Doctor</h3>
+                            <canvas id="doctorLoadChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Match Doctor Modal -->
+    <div id="match-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Match Patient with Doctor</h2>
+                <button class="modal-close" id="close-match">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Patient:</strong> <span id="match-patient-name">-</span></p>
+                <p><strong>Symptoms:</strong> <span id="match-symptoms">-</span></p>
+                <hr style="margin: 1rem 0; border: 0; border-top: 1px solid var(--border-color);">
+                <form id="match-confirm-form">
+                    <div class="form-group">
+                        <label>Select Doctor (Specialization Match)</label>
+                        <select id="match-doctor-select" required>
+                            <option value="">Choose a doctor...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Appointment Date</label>
+                        <input type="date" id="match-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Slot</label>
+                        <input type="time" id="match-time" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm & Notify Patient</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Init -->
+    <script>feather.replace();</script>
+    <script type="module">
+        import { enforceProtectedRoute } from '../assets/js/auth.js';
+        import { initReceptionistDashboard } from '../assets/js/dashboards.js';
+
+        enforceProtectedRoute(['Receptionist', 'Admin']);
+        document.addEventListener('DOMContentLoaded', initReceptionistDashboard);
+
+        // Sidebar & Tab Logic
+        const tabs = document.querySelectorAll('.tab-link');
+        const contents = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+
+        document.getElementById('close-match').onclick = () => document.getElementById('match-modal').classList.add('hidden');
+    </script>
+</body>
+
+</html>

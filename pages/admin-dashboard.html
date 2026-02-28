@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CliniVerse</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i data-feather="activity"></i>
+                <span>CliniVerse</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item active">
+                    <i data-feather="grid"></i>
+                    <span>Control Center</span>
+                </a>
+                <a href="patients.html" class="nav-item">
+                    <i data-feather="users"></i>
+                    <span>All Patients</span>
+                </a>
+                <a href="appointments.html" class="nav-item">
+                    <i data-feather="calendar"></i>
+                    <span>All Appointments</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <i data-feather="log-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-wrapper">
+
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <button class="hamburger" id="sidebar-toggle" style="display: none;">
+                    <i data-feather="menu"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <span style="font-weight: 500; color: var(--text-muted);" id="user-display-name">Admin</span>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Clinic Management System</h1>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-nav">
+                    <div class="tab-link active" data-tab="overview">Overview</div>
+                    <div class="tab-link" data-tab="users">User Management</div>
+                    <div class="tab-link" data-tab="settings">Clinic Settings</div>
+                    <div class="tab-link" data-tab="analytics">Analytics</div>
+                </div>
+
+                <!-- Tab: Overview -->
+                <div id="overview" class="tab-content active">
+                    <!-- Dashboard Stats Grid -->
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i data-feather="users"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Patients</h3>
+                                <p id="stat-total-patients">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i data-feather="user-plus"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Doctors</h3>
+                                <p id="stat-total-doctors">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i data-feather="calendar"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Appointments</h3>
+                                <p id="stat-total-appointments">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red"><i data-feather="clock"></i></div>
+                            <div class="stat-info">
+                                <h3>Today's Appts</h3>
+                                <p id="stat-today-appointments">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Access Toggles -->
+                    <div class="table-container" style="margin-bottom: 2rem;">
+                        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
+                            <h2 style="font-size: 1.125rem; font-weight: 600;">Dashboard Access Toggles</h2>
+                        </div>
+                        <div
+                            style="padding: 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                            <div class="toggle-box">
+                                <span>Admin Dashboard</span>
+                                <label class="switch"><input type="checkbox" id="toggle-admin"><span
+                                        class="slider round"></span></label>
+                            </div>
+                            <div class="toggle-box">
+                                <span>Doctor Dashboard</span>
+                                <label class="switch"><input type="checkbox" id="toggle-doctor"><span
+                                        class="slider round"></span></label>
+                            </div>
+                            <div class="toggle-box">
+                                <span>Receptionist Dashboard</span>
+                                <label class="switch"><input type="checkbox" id="toggle-receptionist"><span
+                                        class="slider round"></span></label>
+                            </div>
+                            <div class="toggle-box">
+                                <span>Patient Dashboard</span>
+                                <label class="switch"><input type="checkbox" id="toggle-patient"><span
+                                        class="slider round"></span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div
+                            style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <h2 style="font-size: 1.125rem; font-weight: 600;">Recent Appointments</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-appointments-body">
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Users -->
+                <div id="users" class="tab-content">
+                    <div class="table-container">
+                        <div
+                            style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <h2 style="font-size: 1.125rem; font-weight: 600;">System Users</h2>
+                            <button class="btn btn-primary btn-sm" id="add-staff-btn">
+                                <i data-feather="plus" style="width: 16px;"></i> Add Staff Member
+                            </button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Settings -->
+                <div id="settings" class="tab-content">
+                    <div class="settings-grid">
+                        <div class="table-container" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Clinic Timing Rules</h3>
+                            <form id="clinic-timing-form">
+                                <div class="form-group">
+                                    <label>Opening Time</label>
+                                    <input type="time" id="clinic-open" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Closing Time</label>
+                                    <input type="time" id="clinic-close" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Slot Duration (min)</label>
+                                    <select id="slot-duration">
+                                        <option value="15">15 Minutes</option>
+                                        <option value="20">20 Minutes</option>
+                                        <option value="30" selected>30 Minutes</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Weekly Off Day</label>
+                                    <select id="weekly-off">
+                                        <option value="Sunday">Sunday</option>
+                                        <option value="Saturday">Saturday</option>
+                                        <option value="Friday">Friday</option>
+                                        <option value="Monday">Monday</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Save
+                                    Settings</button>
+                            </form>
+                        </div>
+
+                        <div class="table-container" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Holiday & Emergency Closure</h3>
+                            <div class="form-group">
+                                <label>Special Holiday Date</label>
+                                <input type="date" id="holiday-date">
+                            </div>
+                            <div class="form-group">
+                                <label>Holiday Name</label>
+                                <input type="text" id="holiday-name" placeholder="E.g. Public Holiday">
+                            </div>
+                            <button id="add-holiday-btn" class="btn btn-outline" style="width: 100%;">Mark
+                                Holiday</button>
+
+                            <div id="holidays-list" style="margin-top: 1.5rem;">
+                                <!-- List of holidays -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Analytics -->
+                <div id="analytics" class="tab-content">
+                    <div class="analytics-grid">
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Daily Appointments</h3>
+                            <canvas id="appointmentsChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Patient Registration Trends</h3>
+                            <canvas id="registrationsChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Appointment Status</h3>
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Staff Modal -->
+    <div id="staff-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h2>Register New Staff</h2>
+                <button class="close-btn" id="close-staff-modal">&times;</button>
+            </div>
+            <form id="add-staff-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="staff-name" placeholder="Dr. Jane Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="staff-email" placeholder="jane@cliniverse.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Role</label>
+                        <select id="staff-role" required>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Receptionist">Receptionist</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group staff-spec-group">
+                        <label>Specialization (For Doctors)</label>
+                        <input type="text" id="staff-spec" placeholder="Cardiologist">
+                    </div>
+                    <div class="form-group">
+                        <label>Temporary Password</label>
+                        <input type="text" id="staff-pass" value="Temp@123456" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="cancel-staff-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Init -->
+    <script>feather.replace();</script>
+    <script type="module">
+        import { enforceProtectedRoute } from '../assets/js/auth.js';
+        import { initAdminDashboard } from '../assets/js/dashboards.js';
+
+        enforceProtectedRoute(['Admin']);
+        document.addEventListener('DOMContentLoaded', initAdminDashboard);
+
+        // Sidebar & Tab Logic
+        const tabs = document.querySelectorAll('.tab-link');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+    </script>
+    <style>
+        .toggle-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-card);
+        }
+    </style>
+</body>
+
+</html>

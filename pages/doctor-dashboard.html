@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - CliniVerse</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i data-feather="activity"></i>
+                <span>CliniVerse</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="doctor-dashboard.html" class="nav-item active">
+                    <i data-feather="grid"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="appointments.html" class="nav-item">
+                    <i data-feather="calendar"></i>
+                    <span>Manage Appts</span>
+                </a>
+                <a href="prescriptions.html" class="nav-item">
+                    <i data-feather="file-text"></i>
+                    <span>Prescriptions</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <i data-feather="log-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-wrapper">
+
+            <header class="top-navbar">
+                <button class="hamburger" id="sidebar-toggle" style="display: none;">
+                    <i data-feather="menu"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <span style="font-weight: 500; color: var(--text-muted);" id="user-display-name">Doctor</span>
+                    <div class="avatar">D</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Doctor Dashboard</h1>
+                </div>
+
+                <!-- Tab Navigation -->
+                <div class="tab-nav">
+                    <div class="tab-link active" data-tab="today">Today's Schedule</div>
+                    <div class="tab-link" data-tab="availability">Availability & Leave</div>
+                    <div class="tab-link" data-tab="analytics">My Analytics</div>
+                </div>
+
+                <!-- Tab: Today's Schedule -->
+                <div id="today" class="tab-content active">
+                    <div class="dashboard-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon blue"><i data-feather="users"></i></div>
+                            <div class="stat-info">
+                                <h3>Today's Patients</h3>
+                                <p id="stat-today-patients">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon green"><i data-feather="file-text"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Rx Issued</h3>
+                                <p id="stat-total-prescriptions">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon orange"><i data-feather="clock"></i></div>
+                            <div class="stat-info">
+                                <h3>Pending</h3>
+                                <p id="stat-pending-appts">-</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon red"><i data-feather="check-circle"></i></div>
+                            <div class="stat-info">
+                                <h3>Completed</h3>
+                                <p id="stat-completed-appts">-</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div
+                            style="padding: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                            <h2 style="font-size: 1.125rem; font-weight: 600;">Upcoming Appointments</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="today-appointments-body">
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">Loading appointments...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tab: Availability -->
+                <div id="availability" class="tab-content">
+                    <div class="settings-grid">
+                        <div class="table-container" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Daily Hours</h3>
+                            <form id="doctor-hours-form">
+                                <div class="form-group">
+                                    <label>Start Working Time</label>
+                                    <input type="time" id="doctor-open" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>End Working Time</label>
+                                    <input type="time" id="doctor-close" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Set Hours</button>
+                            </form>
+                        </div>
+
+                        <div class="table-container" style="padding: 1.5rem;">
+                            <h3 style="margin-bottom: 1.5rem; font-weight: 600;">Mark Leave / Block Time</h3>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="leave-date">
+                            </div>
+                            <button id="add-leave-btn" class="btn btn-outline" style="width: 100%;">Mark as
+                                Leave</button>
+                            <div id="leaves-list" style="margin-top: 1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Analytics -->
+                <div id="analytics" class="tab-content">
+                    <div class="analytics-grid">
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Patient Case Distribution</h3>
+                            <canvas id="casesChart"></canvas>
+                        </div>
+                        <div class="chart-container">
+                            <h3 style="margin-bottom: 1rem;">Weekly Appointments Handled</h3>
+                            <canvas id="perfChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Illness Insight Modal -->
+    <div id="insight-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Patient Clinical Insight</h2>
+                <button class="modal-close" id="close-insight">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Patient:</strong> <span id="insight-patient-name">-</span></p>
+                <p><strong>Reported Illness:</strong></p>
+                <div id="insight-description"
+                    style="padding: 1rem; background: #f9fafb; border-radius: 8px; margin-top: 0.5rem; border: 1px solid var(--border-color);">
+                    -
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="close-insight-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Init -->
+    <script>feather.replace();</script>
+    <script type="module">
+        import { enforceProtectedRoute } from '../assets/js/auth.js';
+        import { initDoctorDashboard } from '../assets/js/dashboards.js';
+
+        enforceProtectedRoute(['Doctor']);
+        document.addEventListener('DOMContentLoaded', initDoctorDashboard);
+
+        // Sidebar & Tab Logic
+        const tabs = document.querySelectorAll('.tab-link');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+
+        // Modal Close
+        document.getElementById('close-insight').onclick = () => document.getElementById('insight-modal').classList.add('hidden');
+        document.getElementById('close-insight-btn').onclick = () => document.getElementById('insight-modal').classList.add('hidden');
+    </script>
+</body>
+
+</html>

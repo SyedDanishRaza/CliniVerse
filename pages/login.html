@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CliniVerse</title>
+    <!-- Use Tailwind CSS purely via CDN for rapid scaffolding if preferred, but as requested (Vanilla CSS), we'll link our styles.css -->
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <!-- Feather Icons for UI polish -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-main);
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .brand i {
+            width: 48px;
+            height: 48px;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .brand h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Global Loader -->
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+        <p class="mt-4 font-medium color-text-main">Authenticating...</p>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="brand">
+                <i data-feather="activity"></i>
+                <h1>Clini<span>Verse</span></h1>
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin-top: 0.25rem;">Smart Clinic Management
+                    System</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div style="position: relative;">
+                        <i data-feather="mail"
+                            style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); width: 18px;"></i>
+                        <input type="email" id="email" placeholder="doctor@cliniverse.com" required
+                            style="padding-left: 2.5rem;">
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="password">Password</label>
+                    <div style="position: relative;">
+                        <i data-feather="lock"
+                            style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); width: 18px;"></i>
+                        <input type="password" id="password" placeholder="••••••••" required
+                            style="padding-left: 2.5rem;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+                    Sign In <i data-feather="arrow-right" style="width: 18px;"></i>
+                </button>
+            </form>
+
+            <div style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem; color: var(--text-muted);">
+                <p>Don't have an account? <a href="signup.html"
+                        style="color: var(--primary); font-weight: 500; text-decoration: none;">Register here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+    </script>
+    <script type="module" src="../assets/js/firebase-config.js"></script>
+    <script type="module" src="../assets/js/utils.js"></script>
+    <script type="module" src="../assets/js/auth.js"></script>
+</body>
+
+</html>

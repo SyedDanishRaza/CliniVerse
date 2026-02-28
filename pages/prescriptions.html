@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions - CliniVerse</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        .medicine-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+        <p class="mt-4 font-medium" id="loader-text" style="color: var(--text-main);">Processing...</p>
+    </div>
+
+    <div class="app-container">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i data-feather="activity"></i>
+                <span id="role-title">CliniVerse</span>
+            </div>
+
+            <nav class="sidebar-nav" id="dynamic-nav">
+                <!-- Nav mapped dynamically -->
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <i data-feather="log-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-wrapper">
+
+            <header class="top-navbar">
+                <button class="hamburger" id="sidebar-toggle" style="display: none;">
+                    <i data-feather="menu"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <span style="font-weight: 500; color: var(--text-muted);" id="user-display-name">User</span>
+                    <div class="avatar" id="user-avatar">U</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Prescriptions</h1>
+                    <button class="btn btn-primary" id="new-rx-btn">
+                        <i data-feather="plus"></i> Write Prescription
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table id="rx-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Patient Name</th>
+                                <th>Notes snippet</th>
+                                <th style="text-align: right;">Document</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rx-body">
+                            <tr>
+                                <td colspan="4" class="text-center" style="padding: 2rem; color: var(--text-muted);">
+                                    Loading records...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Write Prescription Modal -->
+    <div id="rx-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>Draft Prescription</h2>
+                <button class="close-btn"
+                    onclick="document.getElementById('rx-modal').classList.add('hidden'); document.getElementById('rx-modal').classList.remove('flex');">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="rx-form">
+
+                    <div class="form-group">
+                        <label for="rx-patient">Select Patient</label>
+                        <select id="rx-patient" required>
+                            <option value="">Loading patients...</option>
+                        </select>
+                    </div>
+
+                    <div
+                        style="border-bottom: 2px solid var(--border-color); margin: 1.5rem 0 1rem; padding-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 1rem;">Medicines</h3>
+                        <button type="button" class="btn btn-outline" id="add-med-btn"
+                            style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">+ Add Row</button>
+                    </div>
+
+                    <div id="medicines-container">
+                        <div class="medicine-row">
+                            <input type="text" placeholder="Medicine Name (e.g., Amoxicillin 500mg)" class="med-name"
+                                required>
+                            <input type="text" placeholder="Dosage (1-0-1)" class="med-dose" required>
+                            <input type="text" placeholder="Duration (5 days)" class="med-duration" required>
+                            <button type="button" class="btn btn-outline text-danger"
+                                style="border: none; padding: 0.5rem;" disabled><i data-feather="trash-2"
+                                    style="width: 18px;"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label for="rx-notes">Additional Notes / Advice</label>
+                        <textarea id="rx-notes" rows="3"
+                            placeholder="Rest for 3 days. Drink plenty of water."></textarea>
+                    </div>
+
+                    <div class="modal-footer"
+                        style="margin: -1.5rem; margin-top: 1.5rem; padding: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('rx-modal').classList.add('hidden'); document.getElementById('rx-modal').classList.remove('flex');">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-rx-btn">Generate & Save PDF</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Init -->
+    <script>feather.replace();</script>
+    <script type="module">
+        import { enforceProtectedRoute } from '../assets/js/auth.js';
+        import { initPrescriptionsPage } from '../assets/js/prescriptions.js';
+
+        // Only Doctors should write prescriptions in this setup
+        // But Admins might read. So we protect array, but specialize actions in JS.
+        enforceProtectedRoute(['Doctor', 'Admin']);
+
+        document.addEventListener('DOMContentLoaded', initPrescriptionsPage);
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+{
+    "rules": {
+        "users": {
+            ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'Admin'",
+            ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'Admin'",
+            "$uid": {
+                ".read": "auth != null && $uid === auth.uid",
+                ".write": "auth != null && $uid === auth.uid",
+                ".validate": "newData.hasChildren(['name', 'email', 'role'])"
+            }
+        },
+        "patients": {
+            ".read": "auth != null",
+            ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')"
+        },
+        "appointments": {
+            ".read": "auth != null",
+            ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist' || (root.child('users').child(auth.uid).child('role').val() === 'Doctor' && (!data.exists() || data.child('doctorId').val() === auth.uid) && (!newData.exists() || newData.child('doctorId').val() === auth.uid)))"
+        },
+        "prescriptions": {
+            ".read": "auth != null",
+            ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || (root.child('users').child(auth.uid).child('role').val() === 'Doctor' && newData.child('doctorId').val() === auth.uid))"
+        },
+        "dashboardAccess": {
+            ".read": "auth != null",
+            ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'Admin'"
+        },
+        "clinicSettings": {
+            ".read": "auth != null",
+            ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'Admin'"
+        },
+        "doctorSchedules": {
+            ".read": "auth != null",
+            "$uid": {
+                ".write": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'Admin')"
+            }
+        },
+        "patientRequests": {
+            ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')",
+            "$uid": {
+                ".read": "auth != null && $uid === auth.uid",
+                ".write": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')"
+            }
+        },
+        "notifications": {
+            "$uid": {
+                ".read": "auth != null && $uid === auth.uid",
+                ".write": "auth != null"
+            }
+        }
+    }
+}

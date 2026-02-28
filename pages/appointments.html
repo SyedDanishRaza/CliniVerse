@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments - CliniVerse</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+
+<body>
+
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="app-container">
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i data-feather="activity"></i>
+                <span id="role-title">CliniVerse</span>
+            </div>
+
+            <nav class="sidebar-nav" id="dynamic-nav">
+                <!-- Nav mapped dynamically based on role in JS -->
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <i data-feather="log-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-wrapper">
+
+            <header class="top-navbar">
+                <button class="hamburger" id="sidebar-toggle" style="display: none;">
+                    <i data-feather="menu"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <span style="font-weight: 500; color: var(--text-muted);" id="user-display-name">User</span>
+                    <div class="avatar" id="user-avatar">U</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Appointments</h1>
+                    <button class="btn btn-primary" id="book-appt-btn" style="display: none;">
+                        <i data-feather="calendar"></i> Book Appointment
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div
+                    style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; background: var(--bg-card); padding: 1rem; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Filter by
+                            Date</label>
+                        <input type="date" id="filter-date">
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Filter by
+                            Status</label>
+                        <select id="filter-status">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline" id="clear-filters-btn" style="margin-top: 1.25rem;">Clear
+                            Filters</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-container">
+                    <table id="appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Patient Name</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-body">
+                            <tr>
+                                <td colspan="5" class="text-center" style="padding: 2rem; color: var(--text-muted);">
+                                    Loading appointments...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="appt-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Book Appointment</h2>
+                <button class="close-btn"
+                    onclick="document.getElementById('appt-modal').classList.add('hidden'); document.getElementById('appt-modal').classList.remove('flex');">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="appt-form">
+                    <input type="hidden" id="appt-id">
+
+                    <div class="form-group">
+                        <label for="appt-patient">Select Patient</label>
+                        <select id="appt-patient" required>
+                            <option value="">Loading patients...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appt-doctor">Select Doctor</label>
+                        <select id="appt-doctor" required>
+                            <option value="">Loading doctors...</option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="appt-date">Date</label>
+                            <input type="date" id="appt-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="appt-time">Time</label>
+                            <input type="time" id="appt-time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="appt-status">Status</label>
+                        <select id="appt-status" required>
+                            <option value="Pending">Pending</option>
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-footer"
+                        style="margin: -1.5rem; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('appt-modal').classList.add('hidden'); document.getElementById('appt-modal').classList.remove('flex');">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-appt-btn">Save Appointment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Init -->
+    <script>feather.replace();</script>
+    <script type="module">
+        import { enforceProtectedRoute } from '../assets/js/auth.js';
+        import { initAppointmentsPage } from '../assets/js/appointments.js';
+
+        enforceProtectedRoute();
+        document.addEventListener('DOMContentLoaded', initAppointmentsPage);
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients - CliniVerse</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+
+<body>
+
+    <div id="global-loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Toast Container dynamically injected by utils.js -->
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i data-feather="activity"></i>
+                <span id="role-title">CliniVerse</span>
+            </div>
+
+            <nav class="sidebar-nav" id="dynamic-nav">
+                <!-- Nav mapped dynamically based on role in JS -->
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="logout-btn">
+                    <i data-feather="log-out"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-wrapper">
+
+            <header class="top-navbar">
+                <button class="hamburger" id="sidebar-toggle" style="display: none;">
+                    <i data-feather="menu"></i>
+                </button>
+                <div style="flex: 1;"></div>
+                <div class="user-profile">
+                    <span style="font-weight: 500; color: var(--text-muted);" id="user-display-name">User</span>
+                    <div class="avatar" id="user-avatar">U</div>
+                </div>
+            </header>
+
+            <div class="content">
+                <div class="page-header">
+                    <h1 class="page-title">Patient Records</h1>
+                    <button class="btn btn-primary" id="add-patient-btn" style="display: none;">
+                        <i data-feather="user-plus"></i> Add Patient
+                    </button>
+                </div>
+
+                <!-- Search and Filters -->
+                <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+                    <div style="position: relative; max-width: 400px; flex: 1;">
+                        <i data-feather="search"
+                            style="position: absolute; left: 12px; top: 10px; color: var(--text-muted); width: 18px;"></i>
+                        <input type="text" id="search-patient" placeholder="Search by name or phone..."
+                            style="padding-left: 2.5rem;">
+                    </div>
+                </div>
+
+                <!-- Patient Table -->
+                <div class="table-container">
+                    <table id="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age / Gender</th>
+                                <th>Phone</th>
+                                <th>Added Date</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-body">
+                            <tr>
+                                <td colspan="5" class="text-center" style="padding: 2rem; color: var(--text-muted);">
+                                    Loading patients...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Add / Edit Patient Modal -->
+    <div id="patient-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Patient</h2>
+                <button class="close-btn"
+                    onclick="document.getElementById('patient-modal').classList.add('hidden'); document.getElementById('patient-modal').classList.remove('flex');">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="patient-form">
+                    <input type="hidden" id="patient-id">
+
+                    <div class="form-group">
+                        <label for="p-name">Full Name</label>
+                        <input type="text" id="p-name" required placeholder="John Doe">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="p-age">Age</label>
+                            <input type="number" id="p-age" required min="0" max="150" placeholder="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="p-gender">Gender</label>
+                            <select id="p-gender" required>
+                                <option value="">Select...</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="p-phone">Phone Number</label>
+                        <input type="tel" id="p-phone" required placeholder="+1 234 567 8900">
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label for="p-address">Address</label>
+                        <textarea id="p-address" rows="3" placeholder="123 Street, City"></textarea>
+                    </div>
+
+                    <div class="modal-footer"
+                        style="margin: -1.5rem; margin-top: 1rem; padding: 1.5rem; border-top: 1px solid var(--border-color);">
+                        <button type="button" class="btn btn-outline"
+                            onclick="document.getElementById('patient-modal').classList.add('hidden'); document.getElementById('patient-modal').classList.remove('flex');">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="save-patient-btn">Save Patient</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Init -->
+    <script>feather.replace();</script>
+    <script type="module">
+        import { enforceProtectedRoute } from '../assets/js/auth.js';
+        import { initPatientsPage } from '../assets/js/patients.js';
+
+        // Anyone logged in can see patients. Role logic for edits is handled in patients.js
+        enforceProtectedRoute();
+        document.addEventListener('DOMContentLoaded', initPatientsPage);
+
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        if (toggleBtn) {
+            toggleBtn.style.display = window.innerWidth <= 768 ? 'block' : 'none';
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CliniVerse - Smart Clinic Management System</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        /* Landing Page Specific Overrides & Additions */
+        body {
+            background-color: var(--bg-main);
+            overflow-x: hidden;
+        }
+
+        /* Standard SaaS Navbar */
+        .landing-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4rem;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .landing-nav .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .landing-nav .brand span {
+            color: var(--primary);
+        }
+
+        .landing-nav-links {
+            display: flex;
+            gap: 2rem;
+            font-weight: 500;
+        }
+
+        .landing-nav-links a {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .landing-nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem;
+            background: linear-gradient(to bottom, #fef2f2 0%, var(--bg-main) 100%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            max-width: 800px;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 4rem;
+            background-color: var(--bg-main);
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-inline: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .feature-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #fef2f2;
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Why Choose Us & How it works (Alternating) */
+        .alternating-section {
+            padding: 5rem 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .alternating-section.bg-gray {
+            background-color: #fafafa;
+        }
+
+        .alternating-content h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .alternating-content p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .alternating-list {
+            list-style: none;
+        }
+
+        .alternating-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .alternating-list li .icon-wrapper {
+            background-color: #fef2f2;
+            color: var(--primary);
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+        }
+
+        .placeholder-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #e5e5e5 0%, #f5f5f5 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a3a3a3;
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--secondary);
+            color: #d4d4d4;
+            padding: 4rem 4rem 2rem 4rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-brand h2 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-brand h2 span {
+            color: var(--primary);
+        }
+
+        .footer-links h3 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links ul li a {
+            transition: color 0.2s;
+        }
+
+        .footer-links ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 768px) {
+            .landing-nav {
+                padding: 1rem 2rem;
+            }
+
+            .landing-nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .features,
+            .alternating-section {
+                padding: 3rem 2rem;
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="landing-nav">
+        <div class="brand">
+            <i data-feather="activity"></i>
+            Clini<span>Verse</span>
+        </div>
+        <div class="landing-nav-links">
+            <a href="#features">Features</a>
+            <a href="#why-us">Why Choose Us</a>
+            <a href="#how">How It Works</a>
+        </div>
+        <div class="auth-buttons">
+            <a href="pages/login.html" class="btn btn-outline">Log In</a>
+            <a href="pages/signup.html" class="btn btn-primary">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Modern Clinic Management<br><span>Made Simple</span></h1>
+        <p>A secure, corporate-ready solution for doctors, receptionists, and patients. Manage appointments, generate
+            prescriptions, and review medical history in one place.</p>
+        <div class="hero-buttons">
+            <a href="pages/signup.html" class="btn btn-primary"
+                style="padding: 0.8rem 1.75rem; font-size: 1.1rem;">Start Free Trial</a>
+            <a href="#features" class="btn btn-outline"
+                style="padding: 0.8rem 1.75rem; font-size: 1.1rem; border-color: transparent;">Learn More</a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features">
+        <h2 class="section-title">Everything your clinic needs</h2>
+        <p class="section-subtitle">We provide a comprehensive suite of tools designed to streamline daily operations
+            and enhance the patient experience.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i data-feather="shield"></i></div>
+                <h3>Secure Role-Based Access</h3>
+                <p>Granular access control. Distinct interfaces for Admins, Doctors, Receptionists, and Patients driven
+                    by Realtime Database security.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"><i data-feather="calendar"></i></div>
+                <h3>Appointment Management</h3>
+                <p>Powerful scheduling tools. Receptionists can book, doctors can update statuses, and patients can
+                    review their upcoming visits.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"><i data-feather="cpu"></i></div>
+                <h3>AI Symptom Checker</h3>
+                <p>Pre-screening intelligence limits wait times. Patients can utilize advanced symptom analysis prior to
+                    booking an appointment (Coming Soon).</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon"><i data-feather="file-text"></i></div>
+                <h3>Prescription Generation</h3>
+                <p>Instantly generate professional PDF prescriptions. Securely store them in the cloud for patients to
+                    download anytime via their timeline.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="why-us" class="alternating-section bg-gray">
+        <div class="placeholder-image"
+            style="background: url('clinic_dashboard_hero_preview_1772314313729.png'); background-size: cover; background-position: center; border: 1px solid var(--border-color);">
+            <!-- Image overlay or caption if needed -->
+        </div>
+        <div class="alternating-content">
+            <h2>Why Choose CliniVerse?</h2>
+            <p>Built strictly for the demanding workflow of modern healthcare professionals. No cartoonish UIs, just
+                pure corporate efficiency.</p>
+
+            <ul class="alternating-list">
+                <li>
+                    <div class="icon-wrapper"><i data-feather="check"></i></div>
+                    <div>
+                        <strong>Clinic-Ready & Secure</strong>
+                        <p style="font-size:0.9rem; margin-top:0.25rem;">Enterprise-grade security rules protecting
+                            sensitive patient health information.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="icon-wrapper"><i data-feather="check"></i></div>
+                    <div>
+                        <strong>Efficient Workflows</strong>
+                        <p style="font-size:0.9rem; margin-top:0.25rem;">Minimal clicks required for daily tasks, saving
+                            hours per week for your staff.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="icon-wrapper"><i data-feather="check"></i></div>
+                    <div>
+                        <strong>Time-Saving Admin Controls</strong>
+                        <p style="font-size:0.9rem; margin-top:0.25rem;">Manage dashboard access and personnel directly
+                            from an intuitive control panel.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how" class="alternating-section">
+        <div class="alternating-content">
+            <h2>How It Works</h2>
+            <p>From initial registration to historical medical review, the process is seamless.</p>
+
+            <ul class="alternating-list">
+                <li>
+                    <div class="icon-wrapper"><i data-feather="user-plus"></i></div>
+                    <div>
+                        <strong>1. Register & Authorize</strong>
+                        <p style="font-size:0.9rem; margin-top:0.25rem;">Sign up to the organization. Administrative
+                            approval activates your role-specific dashboard.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="icon-wrapper"><i data-feather="calendar"></i></div>
+                    <div>
+                        <strong>2. Manage Appointments</strong>
+                        <p style="font-size:0.9rem; margin-top:0.25rem;">Admins block out time, patients check in, and
+                            doctors update statuses upon completion.</p>
+                    </div>
+                </li>
+                <li>
+                    <div class="icon-wrapper"><i data-feather="activity"></i></div>
+                    <div>
+                        <strong>3. Generate & Review</strong>
+                        <p style="font-size:0.9rem; margin-top:0.25rem;">Doctors construct prescriptions that
+                            automatically populate the persistent Patient Medical Timeline.</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="placeholder-image"
+            style="background: url('clinic_reception_modern_1772314548160.png'); background-size: cover; background-position: center; border: 1px solid var(--border-color);">
+            <!-- Image overlay or caption if needed -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h2><i data-feather="activity"></i> Clini<span>Verse</span></h2>
+                <p style="color: #a3a3a3; font-size:0.95rem; line-height: 1.6;">Providing smart, reliable, and secure
+                    clinic management infrastructure tailored for healthcare professionals.</p>
+            </div>
+
+            <div class="footer-links">
+                <h3>Platform</h3>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#why-us">Why Choose Us</a></li>
+                    <li><a href="#how">How It Works</a></li>
+                    <li><a href="pages/login.html">Sign In</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h3>Contact</h3>
+                <ul>
+                    <li><a href="#">Support Center</a></li>
+                    <li><a href="#">Sales</a></li>
+                    <li><a href="#">Security Updates</a></li>
+                    <li><a href="#">Legal & Privacy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 CliniVerse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+
+</html>
