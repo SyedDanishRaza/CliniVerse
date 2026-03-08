@@ -1,7 +1,7 @@
 // assets/js/dashboards.js
 
 import { auth, db, firebaseConfig } from './firebase-config.js';
-import { ref, get, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+import { ref, get, set, update, onValue, push, remove } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
 import {
     onAuthStateChanged,
     createUserWithEmailAndPassword,
@@ -22,9 +22,18 @@ function setUserNameDisplay(user) {
         const name = user.displayName || user.email.split('@')[0];
         nameEl.textContent = name;
 
-        const avatarEl = document.querySelector('.avatar');
-        if (avatarEl) {
-            avatarEl.textContent = name.charAt(0).toUpperCase();
+        const avatarEls = document.querySelectorAll('.avatar');
+        if (avatarEls.length > 0) {
+            avatarEls.forEach(el => {
+                if (user.photoURL) {
+                    el.style.backgroundImage = `url(${user.photoURL})`;
+                    el.style.backgroundSize = 'cover';
+                    el.style.backgroundPosition = 'center';
+                    el.textContent = '';
+                } else {
+                    el.textContent = name.charAt(0).toUpperCase();
+                }
+            });
         }
     }
 }
@@ -823,27 +832,30 @@ export function initPatientDashboard() {
         toggleLoader(true);
 
         try {
-            const usersSnap = await get(ref(db, 'users'));
+            const userSnap = await get(ref(db, `users/${user.uid}`));
             let matchedPatient = null;
-            let patientId = null;
+            let patientId = user.uid;
 
-            if (usersSnap.exists()) {
-                usersSnap.forEach(child => {
-                    const u = child.val();
-                    if (u.role === 'Patient' && u.email?.toLowerCase() === user.email.toLowerCase()) {
-                        matchedPatient = u;
-                        patientId = child.key;
-                    }
-                });
+            if (userSnap.exists()) {
+                const u = userSnap.val();
+                if (u.role === 'Patient') {
+                    matchedPatient = u;
+                }
             }
 
             if (!matchedPatient) {
                 const unlinked = document.getElementById('unlinked-warning');
                 if (unlinked) unlinked.classList.remove('hidden');
-                const ptEmail = document.getElementById('pt-email');
-                if (ptEmail) ptEmail.textContent = user.email;
-                toggleLoader(false);
-                return;
+
+                // Set default matched patient fields
+                matchedPatient = {
+                    name: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    role: 'Patient'
+                };
+            } else {
+                const unlinked = document.getElementById('unlinked-warning');
+                if (unlinked) unlinked.classList.add('hidden');
             }
 
             const pName = document.getElementById('pt-name'); if (pName) pName.textContent = matchedPatient.name || 'N/A';
@@ -870,7 +882,7 @@ export function initPatientDashboard() {
                 if (apptsSnap.exists()) {
                     apptsSnap.forEach(s => {
                         const a = s.val();
-                        if (a.patientId === patientId) {
+                        if (a.patientId === patientId || (a.patientEmail && a.patientEmail === user.email)) {
                             if (a.date >= todayStr && a.status !== 'Cancelled' && a.status !== 'Completed') {
                                 upcomingCount++;
                                 const tr = document.createElement('tr');
@@ -897,7 +909,7 @@ export function initPatientDashboard() {
                 if (prescSnap.exists()) {
                     prescSnap.forEach(s => {
                         const p = s.val();
-                        if (p.patientId === patientId) {
+                        if (p.patientId === patientId || (p.patientEmail && p.patientEmail === user.email)) {
                             historyData.push({ type: 'prescription', date: formatDate(p.createdAt), data: p, ts: p.createdAt });
                         }
                     });
@@ -970,10 +982,26 @@ export function initPatientDashboard() {
                     };
 
                     try {
+                        // 1. Update user profile
                         await set(ref(db, `users/${patientId}`), {
                             ...matchedPatient,
                             ...updatedData
                         });
+                        // 2. Update patient record for Admin/Reception views
+                        await update(ref(db, `patients/${patientId}`), {
+                            name: updatedData.name,
+                            age: updatedData.age,
+                            gender: updatedData.gender,
+                            phone: updatedData.phone,
+                            address: updatedData.address,
+                            bloodGroup: updatedData.bloodGroup,
+                            emergencyContact: updatedData.emergencyContact,
+                            medicalConditions: updatedData.medicalConditions,
+                            email: matchedPatient.email || document.getElementById('pt-email').textContent,
+                            updatedAt: updatedData.updatedAt,
+                            createdAt: matchedPatient.createdAt || Date.now()
+                        });
+
                         showToast('Profile updated successfully!', 'success');
                         hideEditModal();
                         initPatientDashboard(); // Refresh data
@@ -1008,6 +1036,35 @@ export function initPatientDashboard() {
                     showToast('Symptoms submitted! Reception will contact you.', 'success');
                     sxForm.reset();
                     toggleLoader(false);
+                };
+            }
+
+            const profilePicInput = document.getElementById('profile-pic-input');
+            if (profilePicInput) {
+                profilePicInput.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    toggleLoader(true);
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        const base64Str = event.target.result;
+                        try {
+                            await updateProfile(auth.currentUser, { photoURL: base64Str });
+                            setUserNameDisplay(auth.currentUser);
+
+                            await update(ref(db, `users/${patientId}`), { photoURL: base64Str });
+                            await update(ref(db, `patients/${patientId}`), { photoURL: base64Str });
+
+                            showToast('Profile photo updated successfully!', 'success');
+                        } catch (err) {
+                            console.error(err);
+                            showToast('Failed to change photo. File might be too large.', 'error');
+                        } finally {
+                            toggleLoader(false);
+                        }
+                    };
+                    reader.readAsDataURL(file);
                 };
             }
 

@@ -77,44 +77,78 @@
                         clinic.
                     </div>
 
-                    <div class="dashboard-grid">
-                        <div class="stat-card" style="grid-column: span 2;">
-                            <div class="stat-info" style="width: 100%;">
-                                <h3
-                                    style="margin-bottom: 1rem; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
-                                    <span style="display: flex; align-items: center; gap: 0.5rem;"><i
-                                            data-feather="user" style="width: 20px;"></i> Personal Profile</span>
-                                    <button class="btn btn-outline btn-sm" id="edit-profile-btn"
-                                        style="display: flex; align-items: center; gap: 0.4rem;">
-                                        <i data-feather="edit-2" style="width: 14px;"></i> Edit Details
-                                    </button>
-                                </h3>
-                                <div
-                                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; font-size: 0.95rem;">
-                                    <div><strong>Full Name:</strong> <br><span id="pt-name" class="text-muted">-</span>
+                    <div class="stat-card"
+                        style="grid-column: 1 / -1; display: flex; flex-direction: row; align-items: stretch; gap: 3rem; padding: 2.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                        <!-- Avatar Section -->
+                        <div
+                            style="flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <label for="profile-pic-input"
+                                style="cursor: pointer; display: flex; flex-direction: column; align-items: center;">
+                                <div style="padding: 4px; border-radius: 50%; background: linear-gradient(45deg, var(--accent) 0%, var(--primary) 100%); transition: opacity 0.2s;"
+                                    onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">
+                                    <div
+                                        style="border: 4px solid var(--bg-card); border-radius: 50%; background-color: var(--bg-card);">
+                                        <div class="avatar main-avatar"
+                                            style="width: 140px; height: 140px; font-size: 3.5rem; font-weight: 600; border-radius: 50%; display: flex; justify-content: center; align-items: center; background-color: var(--primary); color: white; overflow: hidden; background-size: cover; background-position: center;">
+                                            P
+                                        </div>
                                     </div>
-                                    <div><strong>Email Address:</strong> <br><span id="pt-email"
-                                            class="text-muted">-</span></div>
-                                    <div><strong>Phone/WhatsApp:</strong> <br><span id="pt-phone"
-                                            class="text-muted">-</span></div>
-                                    <div><strong>Blood Group:</strong> <br><span id="pt-blood"
-                                            class="text-muted">-</span></div>
-                                    <div><strong>Age & Gender:</strong> <br><span id="pt-age-gender"
-                                            class="text-muted">-</span></div>
-                                    <div><strong>Home Address:</strong> <br><span id="pt-address"
-                                            class="text-muted">-</span></div>
-                                    <div><strong>Emergency Contact:</strong> <br><span id="pt-emergency"
-                                            class="text-muted">-</span></div>
-                                    <div><strong>Medical Conditions:</strong> <br><span id="pt-medical"
-                                            class="text-muted">-</span></div>
                                 </div>
-                            </div>
+                                <span
+                                    style="font-size: 0.85rem; font-weight: 600; margin-top: 0.8rem; color: var(--primary);">Change
+                                    Photo</span>
+                            </label>
+                            <input type="file" id="profile-pic-input" accept="image/*" class="hidden">
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon orange"><i data-feather="calendar"></i></div>
-                            <div class="stat-info">
-                                <h3>Upcoming Visits</h3>
-                                <p id="stat-upcoming-appts">0</p>
+
+                        <!-- Info Section -->
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <!-- Top Row: Name and Action Buttons -->
+                            <div
+                                style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                                <h2 id="pt-name"
+                                    style="font-size: 1.75rem; font-weight: 400; color: var(--text-main); line-height: 1; margin: 0;">
+                                    -</h2>
+                                <button class="btn btn-outline btn-sm" id="edit-profile-btn"
+                                    style="padding: 0.35rem 1rem; border-radius: 8px; font-weight: 600; background-color: #efefef; border: none; color: black; font-size: 0.9rem;">
+                                    Edit profile
+                                </button>
+                                <button class="btn btn-outline btn-sm"
+                                    style="padding: 0.35rem 1rem; border-radius: 8px; font-weight: 600; background-color: #efefef; border: none; color: black; font-size: 0.9rem;"
+                                    onclick="alert('Feature coming soon!')">
+                                    View archive
+                                </button>
+                            </div>
+
+                            <!-- Second Row: Instagram Stats (Followers/Following equivalent) -->
+                            <div
+                                style="display: flex; gap: 2.5rem; margin-bottom: 1.5rem; font-size: 1.1rem; color: var(--text-main);">
+                                <div><span style="font-weight: 600;" id="pt-age-gender">-</span></div>
+                                <div><span style="font-weight: 600;" id="pt-blood">-</span> <span
+                                        style="font-weight: 400;">blood group</span></div>
+                                <div><span style="font-weight: 600;" id="stat-upcoming-appts">0</span> <span
+                                        style="font-weight: 400;">upcoming</span></div>
+                            </div>
+
+                            <!-- Third Row: Bio / Info Details -->
+                            <div style="font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+                                <div style="font-weight: 600; margin-bottom: 0.1rem;">Medical Conditions: <span
+                                        style="font-weight: 400;" id="pt-medical">-</span></div>
+                                <div style="color: var(--text-muted); margin-bottom: 0.6rem;" id="pt-email">-</div>
+
+                                <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                                    <div><i data-feather="phone"
+                                            style="width:14px; vertical-align: middle; margin-right: 4px;"></i> <span
+                                            id="pt-phone">-</span></div>
+                                    <div><i data-feather="map-pin"
+                                            style="width:14px; vertical-align: middle; margin-right: 4px;"></i> <span
+                                            id="pt-address">-</span></div>
+                                    <div><i data-feather="alert-circle"
+                                            style="width:14px; vertical-align: middle; margin-right: 4px; color: var(--danger);"></i>
+                                        <strong style="font-weight: 600;">Emergency:</strong> <span
+                                            id="pt-emergency">-</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -11,7 +11,10 @@
         },
         "patients": {
             ".read": "auth != null",
-            ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')"
+            ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')",
+            "$pid": {
+                ".write": "auth != null && $pid === auth.uid"
+            }
         },
         "appointments": {
             ".read": "auth != null",
@@ -37,9 +40,10 @@
         },
         "patientRequests": {
             ".read": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')",
-            "$uid": {
-                ".read": "auth != null && $uid === auth.uid",
-                ".write": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'Admin' || root.child('users').child(auth.uid).child('role').val() === 'Receptionist')"
+            ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'Patient'",
+            "$reqId": {
+                ".read": "auth != null",
+                ".write": "auth != null"
             }
         },
         "notifications": {
